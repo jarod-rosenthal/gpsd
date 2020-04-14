@@ -19,7 +19,7 @@ master-arm-build:
         - docker info
     script: 
         - docker build -t $DOCKER_REGISTRY/$CI_PROJECT_PATH:$CI_COMMIT_REF_NAME-$CI_COMMIT_SHORT_SHA .
-        - docker tag t $DOCKER_REGISTRY/$CI_PROJECT_PATH:$CI_COMMIT_REF_NAME-$CI_COMMIT_SHORT_SHA $DOCKER_REGISTRY/$CI_PROJECT_PATH:latest
+        - docker tag $DOCKER_REGISTRY/$CI_PROJECT_PATH:$CI_COMMIT_REF_NAME-$CI_COMMIT_SHORT_SHA $DOCKER_REGISTRY/$CI_PROJECT_PATH:latest
     tags:
         - xavier
     only:
