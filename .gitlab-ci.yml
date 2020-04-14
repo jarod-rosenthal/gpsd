@@ -1,0 +1,56 @@
+stages:
+    - build-arm
+    - deploy-arm
+
+dev-arm-build:
+    stage: build-arm
+    before_script:
+        - docker info
+    script: 
+        - docker build -t $DOCKER_REGISTRY/$CI_PROJECT_PATH:$CI_COMMIT_REF_NAME -f build/$CI_PROJECT_NAME.arm64.Dockerfile .
+    tags:
+        - xavier
+    only:
+        - develop
+
+master-arm-build:
+    stage: build-arm
+    before_script:
+        - docker info
+    script: 
+        - docker build -t $DOCKER_REGISTRY/$CI_PROJECT_PATH:$CI_COMMIT_REF_NAME-$CI_COMMIT_SHORT_SHA -t $DOCKER_REGISTRY/$CI_PROJECT_PATH:latest -f build/$CI_PROJECT_NAME.arm64.Dockerfile .
+    tags:
+        - xavier
+    only:
+        - master
+
+dev-arm-deploy:
+    stage: deploy-arm
+    before_script:
+        - docker info
+    script: 
+        - docker login $DOCKER_REGISTRY -u $DOCKER_USER -p $DOCKER_PASSWORD
+        - docker push $DOCKER_REGISTRY/$CI_PROJECT_PATH:$CI_COMMIT_REF_NAME
+    tags:
+        - xavier
+    only:
+        - develop
+    when: always
+    dependencies:
+        - dev-arm-build
+
+arm-images-master:
+    stage: deploy-arm
+    before_script:
+        - docker info
+    script: 
+        - docker login $DOCKER_REGISTRY -u $DOCKER_USER -p $DOCKER_PASSWORD
+        - docker push $DOCKER_REGISTRY/$CI_PROJECT_PATH:$CI_COMMIT_REF_NAME-$CI_COMMIT_SHORT_SHA
+        - docker push $DOCKER_REGISTRY/$CI_PROJECT_PATH:latest
+    tags:
+        - xavier
+    only:
+        - master
+    when: manual
+    dependencies:
+        - master-arm-build
