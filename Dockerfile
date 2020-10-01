@@ -1,6 +1,6 @@
-FROM alpine:edge
+FROM alpine:3.12
 
-ENV PACKAGES="gpsd"
+ENV PACKAGES="gpsd gpsd-clients"
 
 RUN apk update && \
     apk add --no-cache ${PACKAGES}
