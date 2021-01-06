@@ -1,11 +1,9 @@
-FROM alpine:3.11
+FROM ubuntu
 
-ENV PACKAGES="gpsd"
+ENV PACKAGES="gpsd gpsd-clients"
 
-RUN apk update && \
-    apk add --no-cache ${PACKAGES}
+RUN apt-get update && \
+    apt-get -y install ${PACKAGES}
 
 EXPOSE 2947
-ENTRYPOINT ["/bin/sh", "-c", "/sbin/syslogd -S -O - -n & exec /usr/sbin/gpsd -N -n -G ${*}","--"]
-
-#CMD ["/bin/sh", "-c", "/sbin/syslogd -S -O - -n & exec /usr/sbin/gpsd -N -n -G ${*}","--"]
+ENTRYPOINT ["/bin/sh", "-c", "/usr/sbin/gpsd -N -n -G ${*}","--"]
